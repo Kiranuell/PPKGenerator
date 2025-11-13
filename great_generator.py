@@ -8,7 +8,6 @@ import os
 import sys
 from pathlib import Path
 
-
 def get_base_dir():
     # Если запущено как exe через PyInstaller
     if getattr(sys, 'frozen', False):
@@ -19,12 +18,22 @@ def get_base_dir():
 base_dir = get_base_dir()
 
 # Парсинг конфиг файла
+config_path = Path('config.txt')
+if not config_path.is_file():
+    with open('config.txt', 'w', encoding='utf-8') as config_file:
+        config_file.write('# файл создан с нуля и требует заполнения\n')
+        config_file.write('# t text_file\n')
+        config_file.write('# i image_folder')
+    print('Не был найден config файл. Создан новый. Требуется заполнение')
+    
+
+
 order = []
 texts = {}
 images = {}
-with open('config', 'r') as file:
+with open('config.txt', 'r') as file:
     for line in file:
-        tori, path = line.strip().split()
+        tori, path, *_ = line.strip().split()
         order.append([tori, path])
         if tori == 't' and path not in texts.keys():
             texts[path] = []
@@ -87,5 +96,5 @@ for t, p in order:
     if t == 'i':
         image_slide(p)
 
-
 c.save()
+print('Презентация готова')
